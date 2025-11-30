@@ -3,8 +3,9 @@ End-to-End Data Analytics Case Study (2016–2018)
 Author: Debjyoti Sengupta
 1. Project Overview
 
-This project analyzes the Brazilian Olist Marketplace dataset containing over 100,000 e-commerce orders from 2016–2018.
-The goal is to identify key marketplace trends and patterns across:
+This project analyzes the Brazilian Olist Marketplace dataset, which contains over 100,000 e-commerce orders collected between 2016 and 2018.
+
+The objective is to identify key marketplace trends across:
 
 Marketplace growth over time
 
@@ -18,17 +19,17 @@ Review score behavior
 
 Freight and logistics efficiency
 
-Product category performance
+Category-wise revenue trends
 
-This reflects a real Business Analyst workflow, involving:
+The project follows a complete Business Analyst workflow:
 
-Data extraction and transformation using SQL
+SQL for data extraction and transformation
 
-KPI creation and business-driven analysis
+KPI building and analysis
 
-Dashboard building using Power BI
+Visualization using Power BI
 
-Insight generation and reporting
+Business insight summarization
 
 2. Repository Structure
 /sql
@@ -49,9 +50,9 @@ Insight generation and reporting
 
 README.md
 
-3. Data Model (Conceptual)
+3. Data Model Overview
 orders
- ├── order_items (one-to-many)
+ ├── order_items
  │     ├── products
  │     └── sellers
  ├── order_payments
@@ -60,22 +61,23 @@ orders
         └── geolocation
 
 
-The structure supports analysis of:
+This schema enables analysis of:
 
-Revenue and seller performance
+Customer location distribution
 
-Freight and logistics trends
+Delivery performance
 
-Customer satisfaction
+Review satisfaction behavior
 
-Delivery delays
+Product-level sales
 
-Category-level sales
+Seller revenue ranking
 
-Geographic distribution
+4. SQL Workflows and Key Insights
 
-4. SQL Queries and Insights
-4.1 Monthly Orders (Trend Analysis)
+Below are essential SQL transformations used for building dashboards and KPIs.
+
+4.1 Monthly Orders Trend
 SELECT
     strftime('%Y-%m', order_purchase_timestamp) AS month,
     COUNT(order_id) AS total_orders
@@ -83,13 +85,11 @@ FROM orders
 GROUP BY 1
 ORDER BY 1;
 
-Findings
+Insight
 
-Orders grew from 4 orders/month (2016) to 7,000+ orders/month (2018)
+Orders increased from approximately 4 per month in 2016 to more than 7000 per month in 2018.
 
-Strong seasonality observed between November–January
-
-Marketplace experienced rapid year-over-year scaling
+Strong seasonal spikes during November–January.
 
 4.2 Category Freight Summary
 SELECT
@@ -101,11 +101,9 @@ LEFT JOIN products p ON oi.product_id = p.product_id
 GROUP BY 1
 ORDER BY avg_freight_value DESC;
 
-Findings
+Insight
 
-Furniture, electronics, and bulky product categories show highest freight
-
-Freight pricing strongly correlates with product weight/size
+Bulky items such as furniture and home appliances have the highest freight costs.
 
 4.3 Seller Revenue Summary
 SELECT
@@ -115,13 +113,13 @@ FROM order_items oi
 GROUP BY 1
 ORDER BY total_revenue DESC;
 
-Findings
+Insight
 
-Top 10 sellers contribute 25–30% of total marketplace revenue
+Top sellers contribute 25–30% of total marketplace revenue.
 
-Marketplace displays a long-tail seller distribution
+Revenue is long-tail distributed.
 
-4.4 State-wise Delivery Time
+4.4 Delivery Time by State
 SELECT
     c.customer_state,
     ROUND(AVG(
@@ -134,11 +132,11 @@ WHERE o.order_delivered_customer_date IS NOT NULL
 GROUP BY 1
 ORDER BY avg_delivery_days DESC;
 
-Findings
+Insight
 
-Northern states experience slower delivery times
+Northern regions show significantly higher delivery times.
 
-Southeastern states (SP, RJ, MG) benefit from robust logistics networks
+Southeastern states such as SP, RJ, MG have the fastest delivery.
 
 4.5 City-Level Order Distribution
 SELECT
@@ -149,11 +147,11 @@ JOIN customers c ON o.customer_id = c.customer_id
 GROUP BY 1
 ORDER BY total_orders DESC;
 
-Findings
+Insight
 
-São Paulo is the clear market leader in terms of orders
+São Paulo dominates in terms of number of orders.
 
-Major metropolitan regions drive the majority of sales
+Major Brazilian cities drive most marketplace activity.
 
 4.6 Review Score Distribution
 SELECT
@@ -163,11 +161,11 @@ FROM order_reviews
 GROUP BY review_score
 ORDER BY review_score DESC;
 
-Findings
+Insight
 
-Majority of customer reviews are 4 or 5 stars
+Most customers give 4 and 5 stars.
 
-Negative reviews strongly tied to delivery issues
+Lower scores are mainly due to delivery-related issues.
 
 4.7 Review Score vs Delivery Delay
 SELECT
@@ -177,43 +175,45 @@ FROM review_delay_analysis d
 JOIN order_reviews r ON d.order_id = r.order_id
 WHERE r.review_score IS NOT NULL;
 
-Findings
+Insight
 
-On-time deliveries receive 4.3–4.7 average rating
+Orders delivered on time receive 4.3–4.7 ratings on average.
 
-Severe delays (>15 days) reduce ratings to 2.0–2.5
-
-Delivery performance is the primary driver of customer satisfaction
+Orders delayed more than 15 days receive approximately 2-star ratings.
 
 5. Dashboard 1 — Business Performance Overview
-Included KPIs
+Visuals Included
 
-Monthly Orders Trend
+Monthly Order Trend
 
 Delivery Status Breakdown
+
+Payment Method Distribution
 
 Top Product Categories by Revenue
 
 Average Delay Days
 
-Payment Method Distribution
-
 Average Review Score
 
 Key Insights
-Area	Insight
-Order Growth	Over 4× growth between 2016–2018
-Delivery Performance	72% of orders delivered on-time or early
-Payment Methods	Credit card dominates payment share
-Category Revenue	Bed/bath, electronics, and health & beauty lead
-Customer Ratings	Strong correlation with delivery speed
+
+Order volume increased more than 400% between 2016–2018.
+
+Credit card is the dominant payment method.
+
+Over 70% of deliveries are on-time or early.
+
+Health, beauty, electronics, and home-related categories lead revenue.
+
+Customer satisfaction strongly correlates with delivery timeliness.
 
 Dashboard file: dashboards/dashboard_1.png
 
 6. Dashboard 2 — Customer and Logistics Overview
-Included KPIs
+Visuals Included
 
-Seller Revenue Distribution
+Seller Revenue Ranking
 
 Top Customer Cities
 
@@ -221,39 +221,43 @@ Average Freight by Category
 
 Review Score Distribution
 
-Delivery Time by State
+Average Delivery Days by State
 
 Delay Bucket vs Review Score
 
 Key Insights
-Area	Insight
-Customer Geography	São Paulo, Rio de Janeiro, and Belo Horizonte lead orders
-Freight Behavior	Heaviest/bulkiest items have highest freight
-Delivery Inequality	Northern states face slowest deliveries
-Review Behavior	Late deliveries produce lowest customer ratings
+
+Major cities such as São Paulo and Rio de Janeiro account for a large portion of orders.
+
+Heavy items incur higher logistics costs.
+
+Delivery performance varies significantly across states.
+
+Very late deliveries result in substantially lower customer ratings.
 
 Dashboard file: dashboards/dashboard_2.png
 
 7. Business Conclusions
 
-The marketplace saw strong and consistent growth from 2016–2018.
+Olist Marketplace showed rapid growth between 2016 and 2018.
 
-Delivery performance is the most influential factor affecting customer satisfaction.
+Delivery performance has the strongest impact on customer satisfaction.
 
-Freight costs for heavy categories present optimization opportunities.
+Freight cost optimization is necessary for heavy item categories.
 
-Revenue follows a long-tail distribution with a small group of high-performing sellers.
+Seller performance follows a long-tail distribution.
 
-Sales are geographically concentrated in major metropolitan cities.
+Urban areas dominate order volume.
 
-Regional delivery challenges affect customer experience and ratings.
+State-wise logistics vary significantly, requiring infrastructure improvements.
 
 8. Tools Used
 Task	Tools
 SQL Querying	SQLite, DB Browser
-Data Modeling	SQL joins and aggregations
+Data Modeling	SQL Joins, Aggregations
 Dashboarding	Power BI
 Documentation	GitHub README
 9. Author
 
 Debjyoti Sengupta
+MSc Data Science
