@@ -1,33 +1,35 @@
-#**Olist Marketplace — SQL + Power BI Business Analysis**
+Olist Marketplace — SQL + Power BI Business Analysis
 
-*End-to-End Data Analytics Case Study (2016–2018)*
-*By Debjyoti Sengupta*
+End-to-End Data Analytics Case Study (2016–2018)
+By Debjyoti Sengupta
 
----
+Project Overview
 
-##**Project Overview**
+This project analyzes the Brazilian Olist Marketplace dataset, containing over 100k e-commerce orders, to understand:
 
-This project analyzes the **Brazilian Olist Marketplace dataset**, containing over **100k e-commerce orders**, to understand:
+Marketplace growth
 
-* Marketplace growth
-* Customer behavior
-* Seller performance
-* Delivery efficiency
-* Review score impact
-* Logistics & freight behavior
-* Category-wise revenue trends
+Customer behavior
 
-The project replicates a **real Business Analyst workflow** using:
+Seller performance
 
-* **SQL** for transformations & KPI creation
-* **Power BI** for dashboards
-* **Business interpretation** for insights
+Delivery efficiency
 
----
+Review score impact
 
-#**Repository Structure**
+Logistics and freight behavior
 
-```
+Category-wise revenue trends
+
+The project replicates a real Business Analyst workflow using:
+
+SQL for transformations, aggregations, and KPI creation
+
+Power BI for dashboard construction
+
+Business interpretation for insights and conclusions
+
+Repository Structure
 /sql
     ├── monthly_orders.sql
     ├── category_freight_summary.sql
@@ -45,34 +47,29 @@ The project replicates a **real Business Analyst workflow** using:
     ├── dashboard_2.png
 
 README.md
-```
 
----
+SQL Queries Used in the Project
 
-#**SQL Queries Used in the Project**
+Below are the main SQL queries used to generate the datasets for analysis and dashboards.
 
-##**Monthly Orders (Trend Analysis)**
-
-```sql
+Monthly Orders (Trend Analysis)
 SELECT
     strftime('%Y-%m', order_purchase_timestamp) AS month,
     COUNT(order_id) AS total_orders
 FROM orders
 GROUP BY 1
 ORDER BY 1;
-```
 
-###  *Result Used in Dashboard*
 
-* Orders grew from **4 per month in 2016** → **7000+ per month in 2018**
-* Peak demand months: **Nov–Jan**
-* Indicates strong seasonal effects (Black Friday & holiday season)
+Insights Used in Dashboard
 
----
+Orders increased from 4 per month in 2016 to over 7,000 per month in 2018
 
-## **Category Freight Summary**
+Strong seasonal pattern with peaks around November to January
 
-```sql
+Indicates holiday and promotional effects on demand
+
+Category Freight Summary
 SELECT
     p.product_category_name_english,
     ROUND(AVG(oi.freight_value), 2) AS avg_freight_value,
@@ -81,36 +78,30 @@ FROM order_items oi
 LEFT JOIN products p ON oi.product_id = p.product_id
 GROUP BY 1
 ORDER BY avg_freight_value DESC;
-```
 
-### *Result Used in Dashboard*
 
-* **Furniture, electronics & heavy items** have highest freight
-* Indicates weight/volume impact on logistics cost
+Insights Used in Dashboard
 
----
+Furniture, electronics, and heavy product categories have the highest freight costs
 
-##**Seller Revenue Summary (Top Sellers)**
+Suggests weight and volume-based logistics pricing
 
-```sql
+Seller Revenue Summary
 SELECT
     oi.seller_id,
     ROUND(SUM(oi.price), 2) AS total_revenue
 FROM order_items oi
 GROUP BY 1
 ORDER BY total_revenue DESC;
-```
 
-### *Result Used in Dashboard*
 
-* Top 10 sellers contribute **25–30%** of total marketplace GMV
-* Marketplace follows a **long-tail distribution**
+Insights Used in Dashboard
 
----
+Top 10 sellers contribute approximately 25–30 percent of total GMV
 
-## ** State-wise Delivery Time**
+Revenue follows a long-tail distribution pattern
 
-```sql
+State-wise Delivery Time
 SELECT
     c.customer_state,
     ROUND(AVG(
@@ -122,18 +113,15 @@ JOIN customers c ON o.customer_id = c.customer_id
 WHERE o.order_delivered_customer_date IS NOT NULL
 GROUP BY 1
 ORDER BY avg_delivery_days DESC;
-```
 
-### *Result Used in Dashboard*
 
-* Northern states have **longer delivery time**
-* Southeast states (SP, RJ, MG) get **faster delivery** due to better logistics
+Insights Used in Dashboard
 
----
+Northern states have significantly longer delivery times
 
-## **City-level Order Distribution**
+Southeastern states such as SP, RJ, and MG receive faster deliveries due to stronger logistics networks
 
-```sql
+City-Level Order Distribution
 SELECT
     c.customer_city,
     COUNT(o.order_id) AS total_orders
@@ -141,136 +129,138 @@ FROM orders o
 JOIN customers c ON o.customer_id = c.customer_id
 GROUP BY 1
 ORDER BY total_orders DESC;
-```
 
-### *Result Used in Dashboard*
 
-* **São Paulo** leads massively
-* Indicates urban concentration of online shopping
+Insights Used in Dashboard
 
----
+São Paulo has the highest order volume by a wide margin
 
-## **Review Score Distribution**
+Purchases are heavily concentrated in metropolitan areas
 
-```sql
+Review Score Distribution
 SELECT
     review_score,
     COUNT(*) AS total_reviews
 FROM order_reviews
 GROUP BY review_score
 ORDER BY review_score DESC;
-```
 
-### *Result Used in Dashboard*
 
-* Majority of reviews are **4 or 5 stars**
-* Low-scoring reviews correlate with **late deliveries**
+Insights Used in Dashboard
 
----
+Most reviews are rated 4 or 5
 
-## **Review Score vs Delivery Delay**
+Low review scores correlate strongly with late deliveries
 
-```sql
+Review Score vs Delivery Delay
 SELECT
     r.review_score,
     d.delay_days
 FROM review_delay_analysis d
 JOIN order_reviews r ON d.order_id = r.order_id
 WHERE r.review_score IS NOT NULL;
-```
-
-### Insights:
-
-* Orders delivered **early or on-time** get **4.3–4.7 average rating**
-* Orders delayed **>15 days** get **2.0–2.5 ratings**
-
----
-
-# **Dashboard 1 — Business Performance Overview**
 
 
-### **KPIs Included:**
+Insights
 
-* Monthly Orders Trend
-* Delivery Status Breakdown
-* Top Product Categories by Revenue
-* Average Delay Days
-* Average Review Score
-* Payment Method Breakdown
+On-time or early deliveries receive average scores between 4.3 and 4.7
 
-### **Key Insights**
+Very late deliveries (more than 15 days) drop average ratings to 2.0–2.5
 
-* Order volume increased **400%** from 2016 to 2018
-* **72%** of deliveries are **on-time or early**
-* **Credit card** is the dominant payment method
-* Categories like *bed/bath*, *electronics*, *health & beauty* dominate revenue
-* Delivery delays strongly influence customer review score
+Dashboard 1 — Business Performance Overview
 
----
+KPIs Displayed
 
-# **Dashboard 2 — Customer & Logistics Overview**
+Monthly Orders Trend
 
+Delivery Status Breakdown
 
-### **KPIs Included:**
+Top Product Categories by Revenue
 
-* Seller Revenue Distribution
-* Top Customer Cities
-* Average Freight Value by Category
-* Review Score Distribution
-* Average Delivery Time by State
-* Delay Bucket vs Review Score
+Average Delay Days
 
-### **Key Insights**
+Average Review Score
 
-* São Paulo, Rio, Belo Horizonte = **major demand hubs**
-* Heavy categories → **highest freight**
-* Delivery time shows logistic inequality across states
-* Very late deliveries correlate with **poor customer satisfaction**
+Payment Method Breakdown
 
----
+Key Insights
 
-# **Data Model (Conceptual)**
+Order volume increased more than fourfold from 2016 to 2018
 
-```
+Seventy-two percent of deliveries are on-time or early
+
+Credit card is the primary payment method used by customers
+
+Categories such as bed/bath, electronics, and health and beauty generate the most revenue
+
+Delivery delay is a major factor influencing customer review scores
+
+Dashboard 2 — Customer and Logistics Overview
+
+KPIs Displayed
+
+Seller Revenue Distribution
+
+Top Customer Cities
+
+Average Freight Value by Category
+
+Review Score Distribution
+
+Average Delivery Time by State
+
+Delay Bucket vs Review Score
+
+Key Insights
+
+São Paulo, Rio de Janeiro, and Belo Horizonte are the largest demand centers
+
+Heavy product categories incur higher freight charges
+
+Delivery time varies significantly by region
+
+Significant delay results in lower customer satisfaction and lower ratings
+
+Data Model (Conceptual)
 orders
- ├── order_items (1:many)
+ ├── order_items (one-to-many)
  │     └── products
  │     └── sellers
  ├── order_payments
  ├── order_reviews
  └── customers
         └── geolocation
-```
 
-This structure enables multi-table joins for:
 
-* revenue aggregation
-* freight cost analysis
-* review sentiment
-* delivery delay analysis
-* customer distribution
+This data model enables analysis of:
 
----
+Revenue across sellers and products
 
-#  **Business Conclusions**
+Freight cost patterns
 
-✔ Olist experienced **rapid growth** (5× in 2 years)
-✔ Delivery performance has the **strongest effect** on customer satisfaction
-✔ Freight cost optimization needed for heavy categories
-✔ Sellers follow a **long-tail** distribution; few sellers contribute bulk of sales
-✔ Urban concentration (SP, RJ) drives majority of revenue
-✔ Northern states show logistical underperformance
+Customer satisfaction and review behavior
 
----
+Delivery speed and delay patterns
 
-#  **Tools Used**
+Geographic distribution of customers
 
-| Task          | Tools                    |
-| ------------- | ------------------------ |
-| SQL querying  | SQLite + DB Browser      |
-| Data modeling | SQL joins / aggregations |
-| Dashboarding  | Power BI                 |
-| Documentation | GitHub README            |
+Business Conclusions
 
----
+Olist experienced strong growth between 2016 and 2018
 
+Delivery performance is the most influential factor affecting customer satisfaction
+
+Freight cost optimization could improve margins in heavy product categories
+
+A small group of sellers contributes a large share of total sales
+
+Online purchases are concentrated in major cities
+
+Northern states face slower delivery times due to logistical limitations
+
+Tools Used
+Task	Tools
+SQL querying	SQLite, DB Browser
+Data modeling	SQL joins and aggregations
+Dashboarding	Power BI
+Documentation	GitHub README
